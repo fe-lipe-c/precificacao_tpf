@@ -10,7 +10,7 @@ $$
 
 onde $P_{t, T}$ é o preço do título em $t$ (dias úteis) que vence em $T$ (dias úteis), $C_{t_{i}}$ é o cupom em $t_{i}$, onde $t < t_{i} \leq t_{n} = T$, $M_{T}$ é o principal que vence em $T$ e $y_{t}$ é a *yield to maturity* em $t$. 
 
-Podemos considerar que $t \in \mathbb{Z}$, ou seja, $t$ pode assumir três valores: t=0, t<0 e t>0.
+Podemos considerar que $t \in \mathbb{Z}$, ou seja, $t$ pode assumir três valores: $t=0$, $t<0$ e $t>0$.
 
 - $\left(t = 0\right)$: Neste caso, estamos calculando o preço atual da LTN, ou seja, o preço no qual o título está sendo negociado no mercado (ou no qual está sendo emitido). A *yield to maturity*  $y_0$ é a taxa pela qual o título é negociado no mercado secundário ou a taxa pela qual a STN emite o papel, que determinará o preço que será pago pela instituição financeira. Essa taxa pode ser determinada por condições de mercado, expectativas de inflação, política monetária e outros fatores econômicos, refletindo o consenso do mercado sobre o valor justo do título naquele momento específico.
 
@@ -24,7 +24,9 @@ $$
 P_{t,T} = \sum_{i=1}^{n} \frac{C_{t_{i}}}{(1+y_{t,t_{i}})^\frac{(t_{i}-t)}{252}} + \frac{M_{T}}{(1+y_{t,t_{n}})^\frac{(T-t)}{252}}
 \end{equation}
 $$
-em que $y_{t,t_{i}}$ é a taxa de juros entre $t$ e $t_{i}$ e $y_{t,t_{n}}$ é a taxa de juros entre $t$ e $t_{n} = T$. Essas taxas poderiam ser obtidas, por exemplo, através da curva DI.
+em que $y_{t,t_{i}}$ é a taxa de juros entre $t$ e $t_{i}$ e $y_{t,t_{n}}$ é a taxa de juros entre $t$ e $t_{n} = T$. Essas taxas poderiam ser obtidas, por exemplo, através da curva DI, no caso de um título pré-fixado.
+
+A ideia por trás das equações $(1)$ e $(2)$ é descontar cada fluxo de caixa do título por uma ou mais taxas, encontrando, assim, o valor presente de cada fluxo. O preço do título será a soma desses valores presentes. Note que o preço pode ser uma função tanto da taxa quanto dos cupons, no caso em que estes forem variáveis aleatórias, como é o caso dos títulos indexados à inflação.
 
 
 ### Títulos públicos federais
