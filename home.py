@@ -3,6 +3,7 @@ import streamlit as st
 import pyield as pyd
 import config as cfg
 from scripts.precificacao import precificacao_ntnf, df_process
+from scripts.plot_functions import plot_lines, plot_lines_precos
 
 st.markdown(
     """<style>.block-container{max-width: 86rem !important;}</style>""",
@@ -45,10 +46,19 @@ def run_interface():
     #     "Valor Aceito (R$)",
     #     "Tipo de Título",
     # ]
-    columns_dataframe = st.columns([2, 6, 2])
     df_auctions_ntnf = df_auctions[df_auctions["Tipo de Título"] == "NTN-F"]
     # columns_dataframe[1].dataframe(df_auctions_ntnf)
-    columns_dataframe[1].dataframe(
+
+    # Rename each data in 'Date de Vencimento' from 'YYYY-MM-DD' to 'FYY', where 'YY' is the last two digits of the year
+    df_auctions_ntnf["Título"] = df_auctions_ntnf["Data de Vencimento"].replace(
+        r"^(\d{2})(\d{2})-(\d{2})-(\d{2})$", r"F\2", regex=True
+    )
+
+    df_auctions_ntnf.reset_index(drop=True, inplace=True)
+
+    columns_dataframe_taxa = st.columns([1, 5, 4, 1])
+
+    columns_dataframe_taxa[1].dataframe(
         df_auctions_ntnf[
             [
                 "Data do Leilão",
@@ -56,10 +66,19 @@ def run_interface():
                 "Taxa (%)",
                 "Quantidade Aceita",
                 "Valor Aceito (R$)",
-                "Tipo de Título",
+                # "Tipo de Título",
+                # "Título",
             ]
         ]
     )
+
+    plot_taxa = plot_lines(
+        df_auctions_ntnf[df_auctions_ntnf["Taxa (%)"] > 0],
+        "Taxa (%)",
+        "Taxa Média de Emissão",
+        "Taxa (%)",
+    )
+    columns_dataframe_taxa[2].altair_chart(plot_taxa, use_container_width=True)
 
     st.markdown(
         """
@@ -67,47 +86,45 @@ def run_interface():
 
         Uma parte do cálculo que pode falhar, e resultar em um preço errado, é a definição do número de dias úteis. É preciso apurar a quantidade de dias úteis entre o vencimento do papel e o momento da sua precificação, e para isso é necessário ter o calendário de feriados. Um fato novo neste sentido foi a aprovação no final do ano passado da Lei nº 14.759/23, que acrescentou o dia 20 de novembro como feriado nacional (dia nacional de Zumbi), diminuindo, assim, o número de dias úteis no ano. No nosso cado, isso leva a um complicador, que é a necessidade de ter dois calendários para precificar títulos que vencem após 20-11-2024. Para realizar esse cálculo, utilizaremos a biblioteca `PYield` [4], que possui um calendário de feriados brasileiros atualizado.
 
-        A tabela abaixo apresenta o preço médio para as NTN-F emitidas:
+        A tabela abaixo apresenta o preço médio para as NTN-F emitidas, além da quantidade de dias úteis até o vencimento:
                 """
     )
 
-    # df_auctions_ntnf["Preço de Emissão (R$)"] = (
-    #     df_auctions_ntnf["Valor Aceito (R$)"] / df_auctions_ntnf["Quantidade Aceita"]
-    # )
+    columns_dataframe_preco = st.columns([1, 5, 4, 1])
 
-    # df_auctions_ntnf["Dias Úteis"] = df_auctions_ntnf.apply(
-    #     lambda x: pyd.count_bdays(
-    #         start=x["Data do Leilão"], end=x["Data de Vencimento"]
-    #     ),
-    #     axis=1,
-    # )
-
-    # df_auctions_ntnf.drop(
-    #     columns=[
-    #         "Quantidade Aceita",
-    #         "Valor Aceito (R$)",
-    #         "Tipo de Título",
-    #     ],
-    #     inplace=True,
-    # )
-    # ultimo_leilao = df_auctions_ntnf["Data do Leilão"].max()
-    columns_dataframe_pos = st.columns([2, 6, 2])
-    # df_auctions_ntnf = df_auctions_ntnf[
-    #     df_auctions_ntnf["Data do Leilão"] == ultimo_leilao
-    # ]
-    columns_dataframe_pos[1].dataframe(
+    columns_dataframe_preco[1].dataframe(
         df_auctions_ntnf[
             [
                 "Data do Leilão",
                 "Data de Vencimento",
                 "Preço de Emissão (R$)",
+                "Dias Úteis",
             ]
         ]
     )
 
+    # plot_preco = plot_lines_precos(
+    #     df_auctions_ntnf[df_auctions_ntnf["Taxa (%)"] > 0],
+    #     "Preço de Emissão (R$)",
+    #     "Preço Médio de Emissão",
+    #     "Preço (R$)",
+    # )
+
+    # plot_preco = plot_preco_dias(df_auctions_ntnf)
+
+    plot_preco = plot_lines(
+        df_auctions_ntnf[df_auctions_ntnf["Taxa (%)"] > 0],
+        "Preço de Emissão (R$)",
+        "Preço Médio de Emissão",
+        "Preço (R$)",
+    )
+    columns_dataframe_preco[2].altair_chart(plot_preco, use_container_width=True)
+
     st.markdown(
         """
-        Além disso, precisamos saber a data em que os cupons são pagos. No caso das NTN-F, os cupons são pagos nos dias 1 de janeiro e 1 de julho.
+        Além disso, precisamos saber a data em que os cupons são pagos. No caso das NTN-F, os cupons são pagos nos dias 1 de janeiro e 1 de julho. Vale lembrar que a liquidação da operação acontece apenas no dia útil seguinte à operaçao. Logo, a contagem de dias úteis até cada cupom e vencimento só começam no dia útil seguinte. Existe pelo menos um caso em que a liquidação de uma emissão aconteceu em dia de pagamento de cupom, que foi o leilão realizado no dia 30/06/2022, com liquidação no dia 01/07/2022. Neste caso, o primeiro pagamento de cupom dessa emissão aconteceu apenas no dia 01/01/2023.
+
+        Portanto, abaixo apresentamos a tabela com os dias úteis até o vencimento e até o pagamento de cada cupom:
                 """
     )
 
@@ -117,6 +134,17 @@ def run_interface():
         df_auctions_ntnf["Preço de Emissão (R$)"]
         - df_auctions_ntnf["Preço Calculado (R$)"]
     )
+
+    df_auctions_ntnf["Quantidade Aceita"] = df_auctions_ntnf[
+        "Quantidade Aceita"
+    ].astype(int)
+
+    df_auctions_ntnf["Taxa (%)"] = df_auctions_ntnf["Taxa (%)"].astype(float)
+
+    # df_auctions_ntnf = df_auctions_ntnf[
+    #     (df_auctions_ntnf["Quantidade Aceita"] == 150000)
+    #     & (df_auctions_ntnf["Taxa (%)"] >= 13)
+    # ]
 
     st.dataframe(df_auctions_ntnf)
 

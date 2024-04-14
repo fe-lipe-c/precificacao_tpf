@@ -35,13 +35,15 @@ def df_process(df_auctions):
         axis=1,
     )
 
-    # df_auctions.drop(
-    #     columns=[
-    #         "Quantidade Aceita",
-    #         "Valor Aceito (R$)",
-    #     ],
-    #     inplace=True,
-    # )
+    df_auctions["Taxa (%)"] = df_auctions["Taxa (%)"].astype(float)
+
+    df_auctions["Data do Leilão"] = pd.to_datetime(df_auctions["Data do Leilão"])
+    df_auctions["Data de Liquidação"] = df_auctions["Data do Leilão"] + pd.DateOffset(
+        days=1
+    )
+    df_auctions["Data do Leilão"] = df_auctions["Data do Leilão"].dt.strftime(
+        "%Y-%m-%d"
+    )
 
     return df_auctions
 
@@ -59,9 +61,14 @@ def present_value(coupons, rate, days_until_payment):
 
 
 def precificacao_ntnf(df_ntnf):
+    df_ntnf["Data de Liquidação"] = df_ntnf["Data de Liquidação"].dt.strftime(
+        "%Y-%m-%d"
+    )
+
     prices = []
+
     for index, row in df_ntnf.iterrows():
-        auction_date = datetime.strptime(row["Data do Leilão"], "%Y-%m-%d")
+        auction_date = datetime.strptime(row["Data de Liquidação"], "%Y-%m-%d")
         maturity_date = datetime.strptime(row["Data de Vencimento"], "%Y-%m-%d")
         rate = row["Taxa (%)"] / 100
         days_until_maturity = pyd.count_bdays(
