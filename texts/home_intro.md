@@ -33,20 +33,22 @@ A ideia por trás das equações $(1)$ e $(2)$ é descontar cada fluxo de caixa 
 
 Existem 4 tipos de títulos públicos federais que são ofertados em leilões regulares pelo Tesouro Nacional:
 
-- Letra do Tesouro Nacional (LTN): são títulos *zero-coupon* que pagam R$ 1.000,00 no vecimento, sendo emitidos com deságio. 
+- Nota do Tesouro Nacional série F (NTN-F): são títulos que pagam R$ 1.000,00 no vencimento (valor nominal), com pagamento de cupons semestrais de 10% ao ano (aproximadamente 4,88% ao semestre) do valor nominal do título (), sendo emitidos com deságio.
 
-- Nota do Tesouro Nacional série F (NTN-F): 
+- Letra do Tesouro Nacional (LTN): são títulos *zero-coupon* que pagam R$ 1.000,00 no vecimento, sendo emitidos com deságio. 
 
 - Nota do Tesouro Nacional série B (NTN-B):
 
 - Letra Financeira do Tesouro (LFT):
 
 
-#### LTN
+#### NTN-F
 
-Como uma LTN não paga cupons, apenas o principal $M_T = 1000$, o seu preço é determinado a partir da seguinte equação:
+O preço de uma NTN-F é determinado a partir da seguinte equação:
 $$
 \begin{equation}
-P_{t,T}^{\tiny\text{LTN}} = \frac{1000}{(1 + y_{t})^\frac{(T-t)}{252}}
+P_{t,T} = \sum_{i=1}^{n} \frac{1000 \times (1,10)^{\frac{1}{2}}}{(1+y_{t})^\frac{(t_{i}-t)}{252}} + \frac{1000}{(1+y_{t})^\frac{(T-t)}{252}}
 \end{equation}
 $$
+
+
