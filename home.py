@@ -122,13 +122,13 @@ def run_interface():
 
     st.markdown(
         """
-        Além disso, precisamos saber a data em que os cupons são pagos. No caso das NTN-F, os cupons são pagos nos dias 1 de janeiro e 1 de julho. Vale lembrar que a liquidação da operação acontece apenas no dia útil seguinte à operaçao. Logo, a contagem de dias úteis até cada cupom e vencimento só começam no dia útil seguinte. Existe pelo menos um caso em que a liquidação de uma emissão aconteceu em dia de pagamento de cupom, que foi o leilão realizado no dia 30/06/2022, com liquidação no dia 01/07/2022. Neste caso, o primeiro pagamento de cupom dessa emissão aconteceu apenas no dia 01/01/2023.
+        Além disso, precisamos saber a data em que os cupons são pagos. No caso das NTN-F, os cupons são pagos nos dias 1 de janeiro e 1 de julho, com pagamento de cupom também no dia do vencimento (sempre 1 de janeiro). Vale lembrar que a liquidação da operação acontece apenas no dia útil seguinte à operaçao. Logo, a contagem de dias úteis até cada cupom e vencimento só começam no dia útil seguinte. Existe pelo menos um caso em que a liquidação de uma emissão aconteceu em dia de pagamento de cupom, que foi o leilão realizado no dia 30/06/2022, com liquidação no dia 01/07/2022. Neste caso, o primeiro pagamento de cupom dessa emissão aconteceu apenas no dia 01/01/2023.
 
-        Portanto, abaixo apresentamos a tabela com os dias úteis até o vencimento e até o pagamento de cada cupom:
+        Abaixo apresentamos a tabela com o fluxo de caixa descontado de um título para cada emissão:
                 """
     )
 
-    df_auctions_ntnf = precificacao_ntnf(df_auctions_ntnf)
+    df_auctions_ntnf, df_coupons = precificacao_ntnf(df_auctions_ntnf)
 
     df_auctions_ntnf["Diferença"] = (
         df_auctions_ntnf["Preço de Emissão (R$)"]
@@ -146,7 +146,9 @@ def run_interface():
     #     & (df_auctions_ntnf["Taxa (%)"] >= 13)
     # ]
 
-    st.dataframe(df_auctions_ntnf)
+    # st.dataframe(df_auctions_ntnf)
+
+    st.dataframe(df_coupons)
 
     with open("texts/home_ltn.md", "r") as file:
         intro_ltn = file.read()
@@ -172,7 +174,7 @@ def run_interface():
     df_auctions_ltn["Preço Calculado (R$)"] = df_auctions_ltn.apply(
         lambda x: precificacao_ltn(x["Taxa (%)"], x["Dias Úteis"]), axis=1
     )
-    df_auctions_ltn["Diferença"] = (
+    df_auctions_ltn["Diferença (R$)"] = (
         df_auctions_ltn["Preço de Emissão (R$)"]
         - df_auctions_ltn["Preço Calculado (R$)"]
     )

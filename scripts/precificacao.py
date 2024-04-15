@@ -52,7 +52,7 @@ def present_value(coupons, rate, days_until_payment):
     pv = 0
     pv_list = []
     for i in range(1, coupons + 1):
-        coupom = (((1000 * (1.10) ** 0.5) - 1000)) / (1 + rate) ** (
+        coupom = ((1000 * (1.10) ** 0.5) - 1000) / (1 + rate) ** (
             days_until_payment[i - 1] / 252
         )
         pv_list.append(coupom)
@@ -67,7 +67,9 @@ def precificacao_ntnf(df_ntnf):
 
     prices = []
 
+    df_cash_flow = pd.DataFrame()
     for index, row in df_ntnf.iterrows():
+        df_coupons = pd.DataFrame()
         auction_date = datetime.strptime(row["Data de Liquidação"], "%Y-%m-%d")
         maturity_date = datetime.strptime(row["Data de Vencimento"], "%Y-%m-%d")
         rate = row["Taxa (%)"] / 100
@@ -116,9 +118,41 @@ def precificacao_ntnf(df_ntnf):
         bond_price = pv_coupons + pv_face_value
         prices.append(bond_price)
 
+        coupons_list.append(pv_face_value)
+        coupon_payment_date.append(maturity_date)
+        days_until_payment.append(days_until_maturity)
+
+        coupon_payment_date = [
+            date.strftime("%Y-%m-%d") for date in coupon_payment_date
+        ]
+        df_coupons["Data de Pagamento"] = coupon_payment_date
+        df_coupons["Dias Úteis"] = days_until_payment
+        df_coupons["Valor Presente (R$)"] = coupons_list
+        maturity_date = maturity_date.strftime("%Y-%m-%d")
+        df_coupons["Data de Vencimento"] = maturity_date
+        auction_date = auction_date.strftime("%Y-%m-%d")
+        df_coupons["Data do Leilão"] = auction_date
+
+        df_cash_flow = pd.concat([df_cash_flow, df_coupons])
+
     df_ntnf["Preço Calculado (R$)"] = prices
     df_ntnf["Diferença"] = (
         df_ntnf["Preço de Emissão (R$)"] - df_ntnf["Preço Calculado (R$)"]
     )
 
-    return df_ntnf
+    df_cash_flow["Valor Presente (R$)"] = df_cash_flow["Valor Presente (R$)"].round(2)
+    df_cash_flow["Título"] = df_cash_flow["Data de Vencimento"].replace(
+        r"^(\d{2})(\d{2})-(\d{2})-(\d{2})$", r"F\2", regex=True
+    )
+    df_cash_flow = df_cash_flow[
+        [
+            "Título",
+            "Data do Leilão",
+            "Data de Pagamento",
+            "Dias Úteis",
+            "Valor Presente (R$)",
+            # "Data de Vencimento",
+        ]
+    ]
+
+    return df_ntnf, df_cash_flow

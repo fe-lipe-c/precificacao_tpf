@@ -4,7 +4,7 @@
 O preço de um título de renda fixa pode ser calculado a partir da seguinte fórmula:
 $$
 \begin{equation}
-P_{t,T} = \sum_{i=1}^{n} \frac{C_{t_{i}}}{(1+y_{t})^\frac{(t_{i}-t)}{252}} + \frac{M_{T}}{(1+y_{t})^\frac{(T-t)}{252}}
+P_{t,T} = \left[\sum_{i=1}^{n} \frac{C_{t_{i}}}{(1+y_{t})^\frac{(t_{i}-t)}{252}}\right] + \frac{M_{T}}{(1+y_{t})^\frac{(T-t)}{252}}
 \end{equation}
 $$
 
@@ -21,7 +21,7 @@ Podemos considerar que $t \in \mathbb{Z}$, ou seja, $t$ pode assumir três valor
 Outra forma de preficiar um título de renda fixa é a partir da seguinte fórmula:
 $$
 \begin{equation}
-P_{t,T} = \sum_{i=1}^{n} \frac{C_{t_{i}}}{(1+y_{t,t_{i}})^\frac{(t_{i}-t)}{252}} + \frac{M_{T}}{(1+y_{t,t_{n}})^\frac{(T-t)}{252}}
+P_{t,T} = \left[\sum_{i=1}^{n} \frac{C_{t_{i}}}{(1+y_{t,t_{i}})^\frac{(t_{i}-t)}{252}}\right] + \frac{M_{T}}{(1+y_{t,t_{n}})^\frac{(T-t)}{252}}
 \end{equation}
 $$
 em que $y_{t,t_{i}}$ é a taxa de juros entre $t$ e $t_{i}$ e $y_{t,t_{n}}$ é a taxa de juros entre $t$ e $t_{n} = T$. Essas taxas poderiam ser obtidas, por exemplo, através da curva DI, no caso de um título pré-fixado.
@@ -33,7 +33,7 @@ A ideia por trás das equações $(1)$ e $(2)$ é descontar cada fluxo de caixa 
 
 Existem 4 tipos de títulos públicos federais que são ofertados em leilões regulares pelo Tesouro Nacional:
 
-- Nota do Tesouro Nacional série F (NTN-F): são títulos que pagam R$ 1.000,00 no vencimento (valor nominal), com pagamento de cupons semestrais de 10% ao ano (aproximadamente 4,88% ao semestre) do valor nominal do título (), sendo emitidos com deságio.
+- Nota do Tesouro Nacional série F (NTN-F): são títulos que pagam R$ 1.000,00 no vencimento (valor nominal), com pagamento de cupons semestrais de 10% ao ano (aproximadamente 4,88% ao semestre) do valor nominal do título, sendo emitidos com deságio. 
 
 - Letra do Tesouro Nacional (LTN): são títulos *zero-coupon* que pagam R$ 1.000,00 no vecimento, sendo emitidos com deságio. 
 
@@ -47,7 +47,7 @@ Existem 4 tipos de títulos públicos federais que são ofertados em leilões re
 O preço de uma NTN-F é determinado a partir da seguinte equação:
 $$
 \begin{equation}
-P_{t,T} = \sum_{i=1}^{n} \frac{1000 \times (1,10)^{\frac{1}{2}}}{(1+y_{t})^\frac{(t_{i}-t)}{252}} + \frac{1000}{(1+y_{t})^\frac{(T-t)}{252}}
+P_{t,T} = \left[\sum_{i=1}^{n} \frac{1000 \times (1,10)^{\frac{1}{2}}}{(1+y_{t})^\frac{(t_{i}-t)}{252}}\right] + \frac{1000}{(1+y_{t})^\frac{(T-t)}{252}}
 \end{equation}
 $$
 
