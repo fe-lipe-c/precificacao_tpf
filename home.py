@@ -261,7 +261,7 @@ def run_interface():
         ]
     ]
     df_teste_ntnf = df_teste_ntnf.style.background_gradient(
-        axis=0, gmap=df_teste_ntnf["Preço de Emissão (R$)"], cmap="Oranges"
+        axis=0, gmap=df_teste_ntnf["Preço de Emissão (R$)"], cmap="BuGn"
     )
 
     st.dataframe(df_teste_ntnf)
@@ -409,7 +409,7 @@ def run_interface():
     ]
 
     df_teste = df_teste.style.background_gradient(
-        axis=0, gmap=df_teste["Preço de Emissão (R$)"], cmap="Oranges"
+        axis=0, gmap=df_teste["Preço de Emissão (R$)"], cmap="BuGn"
     )
 
     st.dataframe(df_teste)
