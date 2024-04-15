@@ -342,10 +342,6 @@ def run_interface():
         plot_preco_ltn, use_container_width=True
     )
 
-    df_teste = st.session_state.df_auctions_ltn[
-        st.session_state.df_auctions_ltn["Data do Leilão"] == "2024-03-28"
-    ]
-
     st.markdown(
         """
         Por fim, aplicamos a equação (4) utilizando a taxa e os dias úteis até o vencimento. Abaixo está a tabela com a diferença entre o valor emitido e o calculado. Da mesmo forma como foi feito para as NTN-F, a diferença não é zero, seja por motivos de arrendondamento, seja pela questão de a taxa fornecida ser a média das taxas aceitas. O gráfico ao lado mostra a série crescente da diferença entre o preço emitido e o preço calculado. A maior diferença em módulo foi de R\$ 33,02, para a emissão da out15 em 24/06/2015.
@@ -395,6 +391,10 @@ def run_interface():
     st.markdown(
         """Abaixo estão as precificações para as LTNs emitidas em 28/03/2024:"""
     )
+
+    df_teste = st.session_state.df_auctions_ltn[
+        st.session_state.df_auctions_ltn["Data do Leilão"] == "2024-03-28"
+    ]
 
     st.dataframe(
         df_teste[
