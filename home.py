@@ -186,7 +186,7 @@ def run_interface():
     leilao_input = columns_selection[1].selectbox(
         "Selecione a emissão",
         list_dates,
-        index=1,
+        index=2,
     )
 
     df_selected = df_coupons[df_coupons["Título"] == titulo_input]
@@ -243,6 +243,26 @@ def run_interface():
     df_diferenca.reset_index(inplace=True)
     chart_diferenca = plot_diff(df_diferenca, "Título")
     columns_diferenca[3].altair_chart(chart_diferenca, use_container_width=True)
+
+    df_teste_ntnf = st.session_state.df_auctions_ntnf[
+        st.session_state.df_auctions_ntnf["Data do Leilão"] == "2024-03-28"
+    ]
+
+    st.markdown(
+        """Abaixo estão as precificações para as NTN-Fs emitidas em 28/03/2024:"""
+    )
+
+    st.dataframe(
+        df_teste_ntnf[
+            [
+                "Data do Leilão",
+                "Título",
+                "Taxa (%)",
+                "Preço de Emissão (R$)",
+                "Preço Calculado (R$)",
+            ]
+        ]
+    )
 
     # st.markdown(
     #     """
@@ -322,6 +342,10 @@ def run_interface():
         plot_preco_ltn, use_container_width=True
     )
 
+    df_teste = st.session_state.df_auctions_ltn[
+        st.session_state.df_auctions_ltn["Data do Leilão"] == "2024-03-28"
+    ]
+
     st.markdown(
         """
         Por fim, aplicamos a equação (4) utilizando a taxa e os dias úteis até o vencimento. Abaixo está a tabela com a diferença entre o valor emitido e o calculado. Da mesmo forma como foi feito para as NTN-F, a diferença não é zero, seja por motivos de arrendondamento, seja pela questão de a taxa fornecida ser a média das taxas aceitas. O gráfico ao lado mostra a série crescente da diferença entre o preço emitido e o preço calculado. A maior diferença em módulo foi de R\$ 33,02, para a emissão da out15 em 24/06/2015.
@@ -368,9 +392,27 @@ def run_interface():
     chart_diferenca_ltn = plot_diff(df_diferenca_ltn, "Data de Vencimento")
     columns_diferenca_ltn[3].altair_chart(chart_diferenca_ltn, use_container_width=True)
 
+    st.markdown(
+        """Abaixo estão as precificações para as LTNs emitidas em 28/03/2024:"""
+    )
+
+    st.dataframe(
+        df_teste[
+            [
+                "Data do Leilão",
+                "Data de Vencimento",
+                "Taxa (%)",
+                "Preço de Emissão (R$)",
+                "Preço Calculado (R$)",
+            ]
+        ]
+    )
+
     # st.dataframe(st.session_state.df_auctions_ltn)
 
     st.write("---")
+
+    st.markdown("## Referências")
 
     with open("texts/referencias.md", "r") as file:
         referencias = file.read()
