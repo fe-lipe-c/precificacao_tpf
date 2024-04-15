@@ -251,18 +251,20 @@ def run_interface():
     st.markdown(
         """Abaixo estão as precificações para as NTN-Fs emitidas em 28/03/2024:"""
     )
-
-    st.dataframe(
-        df_teste_ntnf[
-            [
-                "Data do Leilão",
-                "Título",
-                "Taxa (%)",
-                "Preço de Emissão (R$)",
-                "Preço Calculado (R$)",
-            ]
+    df_teste_ntnf = df_teste_ntnf[
+        [
+            "Data do Leilão",
+            "Título",
+            "Taxa (%)",
+            "Preço de Emissão (R$)",
+            "Preço Calculado (R$)",
         ]
+    ]
+    df_teste_ntnf = df_teste_ntnf.style.background_gradient(
+        axis=0, gmap=df_teste_ntnf["Preço de Emissão (R$)"], cmap="Oranges"
     )
+
+    st.dataframe(df_teste_ntnf)
 
     # st.markdown(
     #     """
@@ -396,17 +398,21 @@ def run_interface():
         st.session_state.df_auctions_ltn["Data do Leilão"] == "2024-03-28"
     ]
 
-    st.dataframe(
-        df_teste[
-            [
-                "Data do Leilão",
-                "Data de Vencimento",
-                "Taxa (%)",
-                "Preço de Emissão (R$)",
-                "Preço Calculado (R$)",
-            ]
+    df_teste = df_teste[
+        [
+            "Data do Leilão",
+            "Data de Vencimento",
+            "Taxa (%)",
+            "Preço de Emissão (R$)",
+            "Preço Calculado (R$)",
         ]
+    ]
+
+    df_teste = df_teste.style.background_gradient(
+        axis=0, gmap=df_teste["Preço de Emissão (R$)"], cmap="Oranges"
     )
+
+    st.dataframe(df_teste)
 
     # st.dataframe(st.session_state.df_auctions_ltn)
 
