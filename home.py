@@ -31,36 +31,6 @@ def run_interface():
                 """
     )
 
-    # df_auctions = pd.read_csv("data/brl_auctions.csv")
-    # df_auctions = df_process(df_auctions)
-    # df_auctions = df_auctions[
-    #     [
-    #         "auction_date",
-    #         "maturity_date",
-    #         "rate",
-    #         "quantity_accepted",
-    #         "accepted_amount",
-    #         "bond_type",
-    #     ]
-    # ]
-    # df_auctions.columns = [
-    #     "Data do Leilão",
-    #     "Data de Vencimento",
-    #     "Taxa (%)",
-    #     "Quantidade Aceita",
-    #     "Valor Aceito (R$)",
-    #     "Tipo de Título",
-    # ]
-    # df_auctions_ntnf = st.session_state.df_auctions[st.session_state.df_auctions["Tipo de Título"] == "NTN-F"]
-    # columns_dataframe[1].dataframe(df_auctions_ntnf)
-
-    # Rename each data in 'Date de Vencimento' from 'YYYY-MM-DD' to 'FYY', where 'YY' is the last two digits of the year
-    # st.session_state.df_auctions_ntnf["Título"] = st.session_state.df_auctions_ntnf["Data de Vencimento"].replace(
-    #     r"^(\d{2})(\d{2})-(\d{2})-(\d{2})$", r"F\2", regex=True
-    # )
-
-    # df_auctions_ntnf.reset_index(drop=True, inplace=True)
-
     columns_dataframe_taxa = st.columns([1, 5, 4, 1])
 
     columns_dataframe_taxa[1].dataframe(
@@ -141,9 +111,10 @@ def run_interface():
                 """
     )
 
-    # st.session_state.df_auctions_ntnf, df_coupons = precificacao_ntnf(
-    #     st.session_state.df_auctions_ntnf
-    # )
+    st.session_state.df_auctions_ntnf, df_coupons = precificacao_ntnf(
+        st.session_state.df_auctions_ntnf
+    )
+    df_coupons.to_csv("data/df_coupons.csv", index=False)
 
     # st.session_state.df_auctions_ntnf["Diferença"] = (
     #     st.session_state.df_auctions_ntnf["Preço de Emissão (R$)"]

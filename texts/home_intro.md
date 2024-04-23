@@ -53,4 +53,3 @@ P_{t,T} = \left[\sum_{i=1}^{n} \frac{1000 \times (1,10)^{\frac{1}{2}}}{(1+y_{t})
 \end{equation}
 $$
 
-

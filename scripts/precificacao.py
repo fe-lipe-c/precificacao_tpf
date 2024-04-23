@@ -61,6 +61,7 @@ def present_value(coupons, rate, days_until_payment):
 
 
 def precificacao_ntnf(df_ntnf):
+    df_ntnf["Data de Liquidação"] = pd.to_datetime(df_ntnf["Data de Liquidação"])
     df_ntnf["Data de Liquidação"] = df_ntnf["Data de Liquidação"].dt.strftime(
         "%Y-%m-%d"
     )
@@ -68,11 +69,13 @@ def precificacao_ntnf(df_ntnf):
     prices = []
 
     df_cash_flow = pd.DataFrame()
+    df_cash_flow_gross = pd.DataFrame()
     for index, row in df_ntnf.iterrows():
         df_coupons = pd.DataFrame()
         auction_date = datetime.strptime(row["Data de Liquidação"], "%Y-%m-%d")
         maturity_date = datetime.strptime(row["Data de Vencimento"], "%Y-%m-%d")
         rate = row["Taxa (%)"] / 100
+
         days_until_maturity = pyd.count_bdays(
             start=auction_date.strftime("%Y-%m-%d"),
             end=maturity_date.strftime("%Y-%m-%d"),
@@ -95,10 +98,8 @@ def precificacao_ntnf(df_ntnf):
                 start=auction_date.strftime("%Y-%m-%d"),
                 end=coupon_date.strftime("%Y-%m-%d"),
             )
-            if len(days_until_payment) == 0:
-                days_until_payment.append(days_until_next_coupon)
-            else:
-                days_until_payment.append(days_until_next_coupon)
+
+            days_until_payment.append(days_until_next_coupon)
             # auction_date = coupon_date  # Update auction_date to the last coupon_date for the next iteration
             coupon_date = datetime(
                 coupon_date.year + (coupon_date.month // 7),
@@ -127,11 +128,15 @@ def precificacao_ntnf(df_ntnf):
         ]
         df_coupons["Data de Pagamento"] = coupon_payment_date
         df_coupons["Dias Úteis"] = days_until_payment
+        gross_coupons = [(1000 * (1.10) ** 0.5) - 1000] * len(coupons_list)
+        gross_coupons[-1] = 1000
+        df_coupons["Valor do Cupom (R$)"] = gross_coupons
         df_coupons["Valor Presente (R$)"] = coupons_list
         maturity_date = maturity_date.strftime("%Y-%m-%d")
         df_coupons["Data de Vencimento"] = maturity_date
         auction_date = auction_date.strftime("%Y-%m-%d")
         df_coupons["Data do Leilão"] = auction_date
+        df_coupons["taxa"] = rate
 
         df_cash_flow = pd.concat([df_cash_flow, df_coupons])
 
@@ -150,7 +155,9 @@ def precificacao_ntnf(df_ntnf):
             "Data do Leilão",
             "Data de Pagamento",
             "Dias Úteis",
+            "Valor do Cupom (R$)",
             "Valor Presente (R$)",
+            "taxa",
             # "Data de Vencimento",
         ]
     ]
